@@ -3,6 +3,11 @@ filebeat:
   inputs:
     {{ filebeat_inputs | to_json }}
 
+{% if filebeat_processors %}
+processors:
+  {{ filebeat_processors | to_json }}
+{% endif %}
+
 # Configure what outputs to use when sending the data collected by the beat.
 # Multiple outputs may be used.
 output:
@@ -23,7 +28,11 @@ output:
 
     # Optional index name. The default is "filebeat" and generates
     # [filebeat-]YYYY.MM.DD keys.
-    #index: "filebeat"
+{% if filebeat_output_index %}
+    index: {{ filebeat_output_index }}
+{% else %}
+    #index: filebeat
+{% endif %}
 
     # Optional HTTP Path
     #path: "/elasticsearch"
@@ -103,7 +112,11 @@ output:
     # Optional index name. The default index name depends on the each beat.
     # For Packetbeat, the default is set to packetbeat, for Topbeat
     # top topbeat and for Filebeat to filebeat.
+{% if filebeat_output_index %}
+    index: {{ filebeat_output_index }}
+{% else %}
     #index: filebeat
+{% endif %}
 
 {% if filebeat_ssl_certificate_file and filebeat_ssl_key_file %}
     # ssl configuration. By default is off.
